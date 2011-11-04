@@ -18,6 +18,15 @@ module Kauperts
 			get_slave_status
 		end
 
+		# Checks if the slave io and the slave sql processes are running
+		# as well as the seconds behind master.
+		#
+		# === Parameters
+		# * +seconds_behind_master_threshold+: consider a delay for this many seconds to not be ok (default: 1800)
+		def ok?(seconds_behind_master_threshold = 1800)
+			self.slave_io_running && self.slave_sql_running && self.seconds_behind_master < seconds_behind_master_threshold
+		end
+
 		private
 
 		def establish_connection!
@@ -68,9 +77,11 @@ begin
 
 	# Do whatever you want to do with the status info you got now.
 	# Example:
-	puts "Seconds behind Master : #{checker.seconds_behind_master}"
-	puts "Slave IO running..... : #{checker.slave_io_running}"
-	puts "Slave SQL running.... : #{checker.slave_sql_running}"
+	# puts "Seconds behind Master : #{checker.seconds_behind_master}"
+	# puts "Slave IO running..... : #{checker.slave_io_running}"
+	# puts "Slave SQL running.... : #{checker.slave_sql_running}"
+
+	checker.ok? ? exit(0) : exit(1)
 
 rescue Kauperts::MysqlSlaveChecker::SlaveNotRunningError => e
 	puts "E: Slave not running"
