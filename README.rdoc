@@ -11,7 +11,7 @@ used as a standalone command line tool with performed actions based on their sta
 at the bottom of the file.
 
 === Usage
-	MYSQL_USERNAME=le_slave MYSQL_PASSWORD=foo MYSQL_SOCKET=/var/run/mysql.sock ./mysql_slave_checker.rb
+<tt>MYSQL_USERNAME=le_slave MYSQL_PASSWORD=foo MYSQL_SOCKET=/var/run/mysql.sock ./mysql_slave_checker.rb</tt>
 
 === Requirements
 The class depends on the +mysql+ and +activesupport+ gems.
@@ -19,3 +19,7 @@ The class depends on the +mysql+ and +activesupport+ gems.
 === .plan
 * Add tests
 * Make this a gem
+
+=== License
+Kauperts::MysqlSlaveChecker is released under a 3-clause BSD-licence. See the LICENSE file for details.
+
