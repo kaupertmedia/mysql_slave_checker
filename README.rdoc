@@ -1,0 +1,21 @@
+== Kauperts::MysqlSlaveChecker
+
+<b>Kauperts::MysqlSlaveChecker</b> is a simple abstraction to access the output of 
+MySQL's `SHOW SLAVE STATUS´ in Ruby.
+
+It translates all column names found in the status output to downcased/underscore'd 
+Ruby methods on the instance.
+
+It is nothing but a quick hackdown and doesn't even come with tests. It's currently
+used as a standalone command line tool with performed actions based on their status
+at the bottom of the file.
+
+=== Usage
+	MYSQL_USERNAME=le_slave MYSQL_PASSWORD=foo MYSQL_SOCKET=/var/run/mysql.sock ./mysql_slave_checker.rb
+
+=== Requirements
+The class depends on the +mysql+ and +activesupport+ gems.
+
+=== .plan
+* Add tests
+* Make this a gem
