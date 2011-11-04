@@ -3,12 +3,14 @@ require 'rubygems'
 require 'mysql'
 
 module Kauperts
-	class Kauperts::MysqlSlaveChecker
+	class MysqlSlaveChecker
+
+		class SlaveNotRunningError < Exception; end
 
 		attr_reader :connection
 		attr_reader :slave_status
 
-		# 
+		#
 		def initialize(attributes = {})
 			attributes.each do |attr,value|
 				instance_variable_set :"@#{attr}", value
@@ -16,18 +18,21 @@ module Kauperts
 			get_slave_status
 		end
 
-		private 
+		private
 
 		def establish_connection!
-			# Mysql.new(host=nil, user=nil, passwd=nil, db=nil, port=nil, sock=nil, flag=nil) 
+			# Mysql.new(host=nil, user=nil, passwd=nil, db=nil, port=nil, sock=nil, flag=nil)
 			@connection ||= Mysql.new(@host, @username, @password, nil, @port, @socket, @flag)
 		end
 
 		def get_slave_status
 			establish_connection!
 			rs = @connection.query('SHOW SLAVE STATUS')
+
 			# nb: it's only one hash
 			rs.each_hash { |h| @slave_status = h }
+			raise SlaveNotRunningError.new unless @slave_status
+
 			@slave_status.each do |k, value|
 				meth = Proc.new{converted_value(value)}
 				self.class.send(:define_method, k.downcase, meth)
@@ -58,13 +63,19 @@ options = {
 	:password => ENV['MYSQL_PASSWORD']
 }
 
-checker = Kauperts::MysqlSlaveChecker.new(options)
+begin
+	checker = Kauperts::MysqlSlaveChecker.new(options)
 
-# Do whatever you want to do with the status info you got now.
-# Example:
-puts "Seconds behind Master : #{checker.seconds_behind_master}"
-puts "Slave IO running..... : #{checker.slave_io_running}"
-puts "Slave SQL running.... : #{checker.slave_sql_running}"
+	# Do whatever you want to do with the status info you got now.
+	# Example:
+	puts "Seconds behind Master : #{checker.seconds_behind_master}"
+	puts "Slave IO running..... : #{checker.slave_io_running}"
+	puts "Slave SQL running.... : #{checker.slave_sql_running}"
+
+rescue Kauperts::MysqlSlaveChecker::SlaveNotRunningError => e
+	puts "E: Slave not running"
+	exit 1
+end
 
 
 
