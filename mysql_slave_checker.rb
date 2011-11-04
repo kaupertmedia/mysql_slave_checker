@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'mysql'
-require 'active_support'
 
 module Kauperts
 	class Kauperts::MysqlSlaveChecker
@@ -11,7 +10,6 @@ module Kauperts
 
 		# 
 		def initialize(attributes = {})
-			attributes.symbolize_keys!
 			attributes.each do |attr,value|
 				instance_variable_set :"@#{attr}", value
 			end
@@ -39,7 +37,7 @@ module Kauperts
 			def converted_value(value)
 				if value.downcase == 'yes' or value.downcase == 'no'
 					value.downcase == 'yes'
-				elsif value.blank?
+				elsif value ==  '' or value.nil?
 					nil
 				elsif /^\d+$/.match(value)
 					value.to_i

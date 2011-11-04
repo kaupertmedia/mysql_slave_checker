@@ -14,7 +14,7 @@ at the bottom of the file.
 <tt>MYSQL_USERNAME=le_slave MYSQL_PASSWORD=foo MYSQL_SOCKET=/var/run/mysql.sock ./mysql_slave_checker.rb</tt>
 
 === Requirements
-The class depends on the +mysql+ and +activesupport+ gems.
+The class depends on the +mysql+ gem (duh...).
 
 === .plan
 * Add tests
